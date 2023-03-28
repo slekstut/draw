@@ -32,6 +32,7 @@
   
 <script>
 import Konva from 'konva'
+import axios from 'axios'
 
 export default {
     name: 'CanvasDrawTool',
@@ -138,8 +139,9 @@ export default {
         },
         async saveDrawing() {
             const dataUrl = this.stage.toDataURL()
+            console.log('save!')
             try {
-                const response = await this.$axios.post('/draw/save-drawing', { dataUrl })
+                const response = await this.$axios.post('/api/save-drawing', { dataUrl })
                 console.log(response.data)
             } catch (error) {
                 console.log(error)
