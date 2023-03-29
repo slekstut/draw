@@ -32,6 +32,7 @@ export default {
   plugins: [
     { src: '~/plugins/konva.js', ssr: false },
     { src: '~/plugins/vue-toasted.js', ssr: false },
+    { src: '~/plugins/toasted.js' },
   ],
 
   // Auto import components: https://go.nuxtjs.dev/config-components

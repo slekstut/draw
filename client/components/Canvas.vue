@@ -19,13 +19,13 @@
                 </svg>
             </button>
             <span>|</span>
-            <button @click="saveDrawing"><svg xmlns="http://www.w3.org/2000/svg" height="48" viewBox="0 96 960 960"
+            <button @click="openModal"><svg xmlns="http://www.w3.org/2000/svg" height="48" viewBox="0 96 960 960"
                     width="48">
                     <path
                         d="M840 373v503q0 24-18 42t-42 18H180q-24 0-42-18t-18-42V276q0-24 18-42t42-18h503l157 157Zm-60 27L656 276H180v600h600V400ZM479.765 811Q523 811 553.5 780.735q30.5-30.264 30.5-73.5Q584 664 553.735 633.5q-30.264-30.5-73.5-30.5Q437 603 406.5 633.265q-30.5 30.264-30.5 73.5Q376 750 406.265 780.5q30.264 30.5 73.5 30.5ZM233 472h358V329H233v143Zm-53-72v476-600 124Z" />
                 </svg></button>
-            <b-modal v-if="showModal" v-model="showModal" title="Filename required" ok-only @ok="handleOkClick">
-                <b-form-input name="filename" ref="filename"></b-form-input>
+            <b-modal v-if="showModal" v-model="showModal" title="Filename required" ok-only @ok="saveDrawing">
+                <b-form-input name="filename" ref="filename" v-model="filename"></b-form-input>
             </b-modal>
         </div>
         <div ref="container" class="draw-area"></div>
@@ -53,6 +53,7 @@ export default {
             brushSize: 10,
             brushColor: 'black',
             showModal: false,
+            filename: null
         }
     },
     mounted() {
@@ -60,15 +61,6 @@ export default {
         this.initListeners()
     },
     methods: {
-        async handleOkClick() {
-            const filename = this.$refs.filename.value;
-            const response = await axios.post('/api/validate-filename', { filename });
-            if (response.data.isValid) {
-                // Do something if the filename is valid
-            } else {
-                // Do something if the filename is invalid
-            }
-        },
         initStage() {
             this.stage = new Konva.Stage({
                 container: this.$refs.container,
@@ -155,17 +147,33 @@ export default {
                 }
             })
         },
-        async saveDrawing() {
+        openModal() {
             this.showModal = true
+        },
+        async saveDrawing() {
             const dataUrl = this.stage.toDataURL()
-            console.log('save!')
+            const fileData = this.filename
             try {
-                const response = await this.$axios.post('/api/save-drawing', { dataUrl })
-                console.log(response.data)
+                const response = await this.$axios.post('http://localhost:8000/api/filevalidation', { dataUrl, fileData })
+                console.log('res', response.data)
+                console.log('sent request!')
+                this.$toasted.show('Drawing was successfully saved!', { duration: 3000, type: 'success' })
+                this.$refs.modal.hide()
+                this.filename = ''
             } catch (error) {
-                console.log(error)
+                if (error.response) {
+                    console.log('Error:', error.response.data.errors.fileData[0])
+                    const err = error.response.data.errors.fileData[0]
+                    console.log('Message:', error.response.data.message)
+                    this.showModal = true
+                    this.$toasted.show(err, { duration: 3000, type: 'error' })
+
+                } else {
+                    console.log('Error:', error.message)
+                }
             }
         },
+
     },
 }
 </script>
