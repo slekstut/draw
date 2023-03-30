@@ -3,6 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\FilenameValidationController;
+use App\Http\Controllers\DrawingController;
 
 /*
 |--------------------------------------------------------------------------
@@ -24,3 +25,4 @@ Route::get('/{any}', function () {
 })->where('any', '.*');
 
 Route::post('/api/validate-filename', [FilenameValidationController::class, 'validateFilename']);
+Route::post('/api/upload', [DrawingController::class, 'store']);

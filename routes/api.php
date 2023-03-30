@@ -17,5 +17,5 @@ use Illuminate\Support\Facades\Route;
 // Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 //     return $request->user();
 // });
-Route::post('/validate-filename', [FilenameValidationController::class, 'validateFilename']);
 Route::post('/filevalidation', [FilenameValidationController::class, 'validateFilename']);
+Route::post('/upload', [DrawingController::class, 'store']);

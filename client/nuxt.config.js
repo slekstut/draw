@@ -33,6 +33,7 @@ export default {
     { src: '~/plugins/konva.js', ssr: false },
     { src: '~/plugins/vue-toasted.js', ssr: false },
     { src: '~/plugins/toasted.js' },
+    { src: '~/plugins/vue-cookies', ssr: false },
   ],
 
   // Auto import components: https://go.nuxtjs.dev/config-components
@@ -49,7 +50,19 @@ export default {
     '@nuxtjs/axios',
   ],
   axios: {
-    baseURL: 'http://localhost:3000', // Replace with your Laravel app's base URL
+    // Base URL of your API
+    baseURL: 'http://localhost:8000/api',
+    // Enable credentials
+    withCredentials: true,
+    // Headers to send with every request
+    headers: {
+      common: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      }
+    },
+    xsrfHeaderName: 'X-XSRF-TOKEN',
+    withCredentials: true
   },
 
   // Build Configuration: https://go.nuxtjs.dev/config-build
